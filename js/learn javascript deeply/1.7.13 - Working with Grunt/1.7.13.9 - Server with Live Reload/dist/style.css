@@ -1,0 +1,162 @@
+/* SASS */
+html {
+  box-sizing: border-box; }
+
+*, *::after, *::before {
+  box-sizing: inherit; }
+
+article.type-system-traditional {
+  font-family: "Noto Sans", sans-serif;
+  text-align: left; }
+  article.type-system-traditional::after {
+    clear: both;
+    content: "";
+    display: block; }
+  article.type-system-traditional h1, article.type-system-traditional h2, article.type-system-traditional h3, article.type-system-traditional p {
+    margin: 0; }
+  article.type-system-traditional hr {
+    border-bottom: 1px solid #DDD;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    margin: 1.5em 0; }
+  article.type-system-traditional p {
+    color: #333;
+    line-height: 1.5em; }
+  article.type-system-traditional a {
+    color: #477DCA;
+    text-decoration: none; }
+  article.type-system-traditional .type {
+    border-bottom: 2px solid;
+    display: inline-block;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 0.7em;
+    font-weight: 800;
+    margin-bottom: 2em;
+    padding: 0.1em 0;
+    text-align: left;
+    text-transform: uppercase; }
+  article.type-system-traditional h1 {
+    font-family: "Radley", serif;
+    font-size: 1.9em;
+    font-weight: 700;
+    margin-bottom: 0.3em; }
+    @media screen and (min-width: 40em) {
+      article.type-system-traditional h1 {
+        font-size: 2.6em; } }
+  article.type-system-traditional h2 {
+    font-family: "Radley", serif;
+    font-size: 1.3em;
+    font-weight: 400;
+    line-height: 1.25em;
+    margin-bottom: 0.9em; }
+    @media screen and (min-width: 40em) {
+      article.type-system-traditional h2 {
+        font-size: 1.5em; } }
+  article.type-system-traditional code {
+    background: #F7F7F7;
+    border-radius: 4.5px;
+    border: 1px solid #E0E0E0;
+    font-size: 0.75em;
+    font-style: normal;
+    padding: 0.1em 0.4em;
+    white-space: nowrap; }
+  article.type-system-traditional h2 code {
+    font-size: 0.65em; }
+  article.type-system-traditional h3 {
+    font-family: "Radley", serif;
+    font-size: 1.4em;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.3em;
+    margin-bottom: 0.4em; }
+  article.type-system-traditional p.date {
+    color: rgba(51, 51, 51, 0.4);
+    font-family: "Radley", serif;
+    font-style: italic;
+    margin-bottom: 0.3em; }
+  article.type-system-traditional p {
+    font-family: "Noto Sans", sans-serif;
+    letter-spacing: 1;
+    line-height: 1.55em;
+    margin-bottom: 1.5em; }
+    article.type-system-traditional p span {
+      font-family: "Radley", serif;
+      font-size: 1.2em;
+      font-style: italic; }
+  article.type-system-traditional a.read-more {
+    display: inline-block;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-left: 0.2em;
+    position: relative;
+    text-transform: uppercase; }
+    article.type-system-traditional a.read-more span {
+      font-family: "Noto Sans", sans-serif;
+      font-size: 1.5em;
+      font-style: normal;
+      position: absolute;
+      right: -12px;
+      top: -1px; }
+  article.type-system-traditional hr {
+    width: 3em; }
+  article.type-system-traditional p.author {
+    font-family: "Radley", serif;
+    font-size: 1.2em;
+    font-style: italic; }
+
+article {
+  padding: 40px; }
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; }
+
+.card {
+  background-color: #f6f6f6;
+  border: 1px solid gainsboro;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px #e6e6e6;
+  cursor: pointer;
+  flex-basis: 15em;
+  flex-grow: 1;
+  margin: 0 1em 1.5em 1em;
+  position: relative;
+  transition: all 0.2s ease-in-out; }
+  .card .card-image {
+    background-color: #F8F2B4;
+    height: 150px;
+    max-height: 150px;
+    overflow: hidden; }
+    .card .card-image img {
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      opacity: 1;
+      transition: all 0.2s ease-in-out;
+      width: 100%; }
+  .card .card-header {
+    background-color: #f6f6f6;
+    border-bottom: 1px solid gainsboro;
+    border-radius: 3px 3px 0 0;
+    font-weight: bold;
+    line-height: 1.5em;
+    padding: 0.5em 0.75em;
+    transition: all 0.2s ease-in-out; }
+  .card .card-copy {
+    font-size: 0.9em;
+    line-height: 1.5em;
+    padding: 0.75em 0.75em; }
+    .card .card-copy p {
+      margin: 0 0 0.75em; }
+  .card:focus, .card:hover {
+    cursor: pointer; }
+    .card:focus img, .card:hover img {
+      opacity: 0.7; }
+  .card:active {
+    background-color: #f6f6f6; }
+    .card:active .card-header {
+      background-color: #f6f6f6; }
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,9 @@
+{
+  "name": "grunt-setup",
+  "version": "0.1.0",
+  "description": "Sample setup for installing Grunt + Grunt CLI",
+  "author": "@zgordon",
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}

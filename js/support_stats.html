@@ -1,0 +1,835 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>bsanevans's Support Stats - Metrimattic</title>
+<link rel="search" type="application/opensearchdescription+xml" href="https://mc.a8c.com/opensearch.xml" title="MGS" />
+
+	<script type="text/javascript">
+		window.wpNotesArgs = {"cacheBuster":1557734176,"iframeUrl":"https:\/\/widgets.wp.com\/notes\/"};
+		wpNotesIsJetpackClientV2 = true;
+	</script>
+<link id="open-sans-css" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600" rel="stylesheet" />
+<link id="noticons-css" href="/wp/i/noticons/noticons.css" rel="stylesheet" />
+<link id="dashicons-css" href="/wp/wp-includes/css/dashicons.min.css" rel="stylesheet" />
+<link id="admin-bar-css" href="/wp/wp-includes/css/admin-bar.min.css" rel="stylesheet" />
+<link id="notifications-css" href="/wp/wp-content/mu-plugins/notes/admin-bar-v2.css" rel="stylesheet" />
+<link id="peace-css" href="/includes/compass/stylesheets/peace.css?m=1559686356" rel="stylesheet" />
+	<script id="jquery-js" type="text/javascript" src="https://mc.a8c.com/wp/wp-includes/js/jquery/jquery.js?m=1558356653"></script>
+	<script id="jquery-migrate-js" type="text/javascript" src="/wp/wp-includes/js/jquery/jquery-migrate.js?m=1550249335"></script>
+	<script id="jquery-cookie-js" type="text/javascript" src="/includes/jquery.cookie.js?m=1382116861"></script>
+	<script id="underscore-js" type="text/javascript" src="/wp/wp-content/js/underscore.js?m=1367178753"></script>
+	<script id="backbone-js" type="text/javascript" src="/wp/wp-content/js/backbone.js?m=1367178753"></script>
+	<script id="mustache-js" type="text/javascript" src="/wp/wp-content/js/mustache.js?m=1365102487"></script>
+	<script id="postbox-js" type="text/javascript" src="/includes/js/postbox.js?m=1391534753"></script>
+	<script id="hoverintent-js-js" type="text/javascript" src="/wp/wp-includes/js/hoverintent-js.min.js?m=1576155535"></script>
+	<script id="admin-bar-js" type="text/javascript" src="/wp/wp-includes/js/admin-bar.min.js?m=1576155535"></script>
+	<script type="text/javascript">$ = jQuery;</script>
+
+	<script type="text/javascript">
+		var ajaxurl = '/ajax.php';
+	</script>
+
+    <script type="text/javascript">
+        const STATS_LABELS = [
+            'tickets',
+            '1:1s',
+            'forums',
+            'Happychats'
+            ];
+
+        class _DayStat {
+            constructor(td) {
+                this.td = td;
+                this.day = this.getDay();
+                if (this.day) {
+                    this.text = td.text();
+                }
+
+            }
+            getDay() {
+                this.aElem = this.td.find('a');
+                let dayString;
+                console.log('aElem.length = '.concat(this.aElem.length));
+                if (this.aElem.length > 0) {
+                    dayString = this.aElem.text();
+                }
+                console.log('dayString = '.concat(dayString));
+                return dayString;
+            }
+        }
+
+        class DayStat extends _DayStat {
+            constructor(td) {
+                super(td);
+                this.stats = [];
+                this.parseText();
+            }
+
+            parseText() {
+                let text = this.text.replace(this.day, '');
+
+                for (var i = 0; i < STATS_LABELS.length; i++) {
+                    let label = STATS_LABELS[i];
+                    let stat = this.extract(text, label);
+                    this.stats.push(stat);
+                };
+
+            }
+
+            extract(text, interaction) {
+                let regex = '\\d+ '.concat(interaction);
+                let rx = new RegExp(regex);
+
+                let match = rx.exec(text);
+                let result = '';
+                if (match) {
+                    result = match[0];
+                    result = result.replace(' '.concat(interaction),
+                        '');
+                }
+                return result;
+            }
+
+        }
+
+
+
+        class DayStat2 {
+            constructor(text, day) {
+                this.text = text;
+                this.day = day;
+
+                this.stats = [];
+
+                this.parseText();
+            }
+
+            parseText() {
+                let text = this.text.replace(this.day, '');
+
+                for (var i = 0; i < STATS_LABELS.length; i++) {
+                    let label = STATS_LABELS[i];
+                    let stat = this.extract(text, label);
+                    this.stats.push(stat);
+                };
+
+            }
+
+            extract(text, interaction) {
+                let regex = '\\d+ '.concat(interaction);
+                let rx = new RegExp(regex);
+
+                let match = rx.exec(text);
+                let result = '';
+                if (match) {
+                    result = match[0];
+                    result = result.replace(' '.concat(interaction),
+                        '');
+                }
+                return result;
+            }
+
+        }
+
+
+        function testDay() {
+            let day1 = new DayStat2('abc def', 'Jan 20');
+            let day2 = new DayStat2('ghi jkl', 'Jan 21');
+            let selector = '#hapdash-content > div:nth-child(4) > div.hapdash-card-content.hapdash-table > table > tbody > tr:nth-child(2) > td:nth-child(1)';
+            console.log('selecting '.concat(selector));
+            let dayElem = $(selector);
+            let aElem = dayElem.find('a');
+            if (aElem.length > 0) {
+                console.log('getting the real day1');
+                dayString = aElem.text();
+                let dataString = dayElem.text();
+
+                day1 = new DayStat2(dataString, dayString);
+            }
+
+            console.log('day1 = '.concat(day1.text, ' ', ' stats ',
+                day1.stats, ' ',  day1.day));
+        }
+
+        function getStatsTrs() {
+            let tb = $('tbody');
+            let _trs = tb.find('tr');
+            let trs = [];
+            _trs.each(function (index) {
+                let text = $(this).text();
+                console.log('tr '.concat(index, ' - ', text));
+                if (text.includes('Overall')) {
+                    trs.push($(this));
+                }
+            });
+
+            return trs;
+        }
+
+		function changeaElemBorder(elems, borderCode) {
+			$.each(elems, function(index, elem){
+				elem.aElem.css("border", borderCode);
+			});
+		}
+
+
+        $(function() {
+            // do something on document ready
+            let trs = getStatsTrs();
+            console.log('trs.length = '.concat(trs.length));
+            for (var i = 0; i < trs.length; i++) {
+                let tr = $(trs[i]);
+                let lastColumn = tr.find('td.td-separated');
+                let button = $('<button>Copy</button>');
+                button.attr('id',  'button-'.concat(i));
+
+                button.css('border', '2px solid red');
+
+				let clickFunction = function(event) {
+                    let tr = event.data.tr;
+                    let tds = tr.find('td');
+                    dayStats = []
+                    tds.each(function (index) {
+                        let _dayStat = new _DayStat($(this));
+                        console.log('td.text = '.concat(_dayStat.td.text()));
+                        if (_dayStat.day) {
+                            let dayStat = new DayStat($(this));
+                            dayStats.push(dayStat);
+                        }
+                    });
+
+					changeaElemBorder(dayStats, "2px blue solid");
+					setTimeout(changeaElemBorder, 2000, dayStats, "none");
+					console.log(dayStats);
+                    weekStats = []
+                    $.each(dayStats, function(index, dayStat) {
+                        $.merge(weekStats, dayStat.stats);
+                    });
+
+                    console.log(weekStats);
+					let output = weekStats.join('\t');
+					console.log(output);
+
+                }
+                button.on("click", { tr: tr }, clickFunction);
+                lastColumn.after(button);
+
+            }
+
+        }); // end ready
+
+	</script>
+
+
+<link rel="stylesheet" href="https://mc.a8c.com/support-stats/i/css/styles.css?v20161122">	<link rel='stylesheet' href='https://s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210'/>
+
+</head>
+
+<body data-user="xizun" class="trunk mp6">
+
+<div id="wpadminbar">
+	<div class="quicklinks">
+		<ul class="ab-top-menu">
+								<li class="menupop" id="navmenu-stats"><a href="/" title="Stats" class="ab-item">Stats</a>
+						<div class="ab-sub-wrapper">
+							<ul class="ab-submenu">
+																		<li class="menu-has-subs menupop" id="navmenu-mcfavs"><a href="/" class="ab-item">MC Favs</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-mcfavs"><a href="/edit-favorites/" title="Edit" class="ab-item">Edit</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-scorecard"><a href="https://scorecard.a8c.com" class="ab-item">Scorecard</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-scorecard"><a href="https://scorecard.a8c.com/overview/wordpress-com?interval=month" title="WordPress.com" class="ab-item">WordPress.com</a></li>
+
+																													<li id="navmenu-scorecard"><a href="https://scorecard.a8c.com/overview/jetpack?interval=month" title="Jetpack" class="ab-item">Jetpack</a></li>
+
+																													<li id="navmenu-scorecard"><a href="https://scorecard.a8c.com/overview/woo-division?interval=month" title="Woo" class="ab-item">Woo</a></li>
+
+																													<li id="navmenu-scorecard"><a href="https://scorecard.a8c.com" title="Personalized dashboard" class="ab-item">Personalized dashboard</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li id="navmenu-engagmentdashboard"><a href="/engagement/" title="Engagment Dashboard" class="ab-item">Engagement Dashboard</a></li>
+																											<li class="menu-has-subs menupop" id="navmenu-tracks"><a href="/tracks" class="ab-item">Tracks</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-tracks"><a href="/tracks/live" title="Live View" class="ab-item">Live View</a></li>
+
+																													<li id="navmenu-tracks"><a href="/tracks/funnel" title="Funnels" class="ab-item">Funnels</a></li>
+
+																													<li id="navmenu-tracks"><a href="/tracks/cohorts" title="Cohorts" class="ab-item">Cohorts</a></li>
+
+																													<li id="navmenu-tracks"><a href="/tracks/trends/" title="Trends" class="ab-item">Trends</a></li>
+
+																													<li id="navmenu-tracks"><a href="/tracks/events" title="Events" class="ab-item">Events</a></li>
+
+																													<li id="navmenu-tracks"><a href="/tracks/cupcakes" title="Cupcakes" class="ab-item">Cupcakes</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li id="navmenu-allstats"><a href="/s/simple-list" title="All Stats" class="ab-item">Stats Extras</a></li>
+																											<li id="navmenu-siteprofiles"><a href="/site-profiles/" title="Site Profiles" class="ab-item">Site Profiles</a></li>
+																											<li id="navmenu-help"><a href="http://fieldguide.automattic.com/use-mc-like-a-pro/" title="Help" class="ab-item">Help</a></li>
+																								</ul>
+						</div>
+					</li>
+									<li class="menupop" id="navmenu-projects"><a href="/projects/" title="Projects" class="ab-item">Projects</a>
+						<div class="ab-sub-wrapper">
+							<ul class="ab-submenu">
+																		<li id="navmenu-wordpress.com"><a href="/projects/wpcom/" title="WordPress.com" class="ab-item">WordPress.com</a></li>
+																											<li id="navmenu-woocommerce"><a href="/projects/woocommerce/" title="WooCommerce" class="ab-item">WooCommerce</a></li>
+																											<li id="navmenu-jetpack"><a href="/projects/jetpack/" title="Jetpack" class="ab-item">Jetpack</a></li>
+																											<li id="navmenu-.blog"><a href="/projects/dotblog/" title=".blog" class="ab-item">.blog</a></li>
+																											<li id="navmenu-other"><a href="/projects/other/" title="Other" class="ab-item">Other</a></li>
+																								</ul>
+						</div>
+					</li>
+									<li class="menupop" id="navmenu-oxygen"><a href="/all-p2s" title="Oxygen" class="ab-item">Oxygen</a>
+						<div class="ab-sub-wrapper">
+							<ul class="ab-submenu">
+																		<li class="menu-has-subs menupop" id="navmenu-searchablelistofp2s"><a href="/all-p2s" class="ab-item">All P2s</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-searchablelistofp2s"><a href="https://wordpress.com/following/edit" title="Edit P2s you follow" class="ab-item">Edit P2s you follow</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2s/#p2s-p2list" title="All P2s sortable by stats" class="ab-item">P2 Stats</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2s/#p2s-updates" title="Posts from Team and Project P2s" class="ab-item">Posts from Team and Project P2s</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2s/#p2s-watercooler" title="Posts from Watercooler P2s" class="ab-item">Posts from Watercooler P2s</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2s/#p2s-subscriptions" title="Posts from your P2 subscriptions" class="ab-item">Posts from your P2 subscriptions</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2s/#p2s-people" title="P2 stats by person" class="ab-item">P2 stats by person</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/swarm/" title="Swarm (Top P2 Posts)" class="ab-item">Swarm (Top P2 Posts)</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/automattic-blogs/" title="Add yourself to A8C P2s" class="ab-item">Add yourself to A8C P2s</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/p2monitor/" title="Monitor Subscribed P2s" class="ab-item">Monitor Subscribed P2s</a></li>
+
+																													<li id="navmenu-searchablelistofp2s"><a href="/tools/new-p2/" title="Create a new P2" class="ab-item">Create a new P2</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-feedback"><a href="/feedback/" class="ab-item">Feedback</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-feedback"><a href="/feedback/anonymous/" title="Request Anonymous Feedback" class="ab-item">Request Anonymous Feedback</a></li>
+
+																													<li id="navmenu-feedback"><a href="/feedback/self/" title="Self Feedback" class="ab-item">Self Feedback</a></li>
+
+																													<li id="navmenu-feedback"><a href="/feedback/hr/" title="Send Team Member Feedback" class="ab-item">Send Team Member Feedback</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-irc"><a href="#" class="ab-item">IRC</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-irc"><a href="https://irc.automattic.com/" title="IRC Logs" class="ab-item">IRC Logs</a></li>
+
+																													<li id="navmenu-irc"><a href="http://fieldguide.automattic.com/communication/#irc" title="IRC Channels" class="ab-item">IRC Channels</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-slack"><a href="https://a8c.slack.com/" class="ab-item">Slack</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-slack"><a href="https://a8c.slack.com/archives" title="Slack Logs" class="ab-item">Slack Logs</a></li>
+
+																													<li id="navmenu-slack"><a href="https://a8c.slack.com/archives" title="Slack Channels" class="ab-item">Slack Channels</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-teams"><a href="/groups/" class="ab-item">Teams</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li id="navmenu-teams"><a href="https://matticspace.automattic.com/" title="Matticspace" class="ab-item">Matticspace</a></li>
+
+																													<li id="navmenu-teams"><a href="https://matticspace.automattic.com/meetamattician/" title="Meetamattician" class="ab-item">Meetamattician</a></li>
+
+																													<li id="navmenu-teams"><a href="/google-contacts/" title="Google Contacts Sync" class="ab-item">Google Contacts Sync</a></li>
+
+																													<li id="navmenu-teams"><a href="/calendar/" title="Birthdays/Anniversaries" class="ab-item">Birthdays/A8C Anniversaries</a></li>
+
+																													<li id="navmenu-teams"><a href="/kudos/" title="Kudos" class="ab-item">Kudos</a></li>
+																																							</ul>
+											</div>
+										</li>
+																											<li id="navmenu-automattic.tv"><a href="http://tv.a8c.com/" title="Automattic.tv" class="ab-item">Automattic.tv</a></li>
+																											<li id="navmenu-behindthescenes"><a href="http://hrp2.wordpress.com/" title="Behind the Scenes" class="ab-item">Behind the Scenes</a></li>
+																											<li id="navmenu-fieldguide"><a href="http://fieldguide.automattic.com/" title="Field Guide" class="ab-item">Field Guide</a></li>
+																											<li id="navmenu-mattchers"><a href="/mattchers/" title="Mattchers" class="ab-item">Mattchers</a></li>
+																											<li id="navmenu-townhall"><a href="/town-hall/" title="Town Hall" class="ab-item">Town Hall</a></li>
+																											<li id="navmenu-thursdayupdates"><a href="http://thursdayupdates.wordpress.com/" title="Thursday Updates" class="ab-item">Thursday Updates</a></li>
+																											<li id="navmenu-automatticupdates"><a href="http://updateomattic.wordpress.com/" title="Automattic Updates" class="ab-item">Updateomattic</a></li>
+																								</ul>
+						</div>
+					</li>
+									<li class="menupop" id="navmenu-more"><a href="/" title="More" class="ab-item"><img src="/images/ellipsis.png" style="width: 20px; height: 20px; vertical-align: middle; margin-top: -2px;"></a>
+						<div class="ab-sub-wrapper">
+							<ul class="ab-submenu">
+																		<li class="menu-has-subs menupop" id="navmenu-dashboards"><a href="#" class="ab-item">Dashboards</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li class="menu-has-subs menupop" id="navmenu-wordpress.com"><a href="#" class="ab-item">WordPress.com</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-engagement"><a href="/engagement" class="ab-item">Engagement</a></li>
+																																					<li id="navmenu-themes"><a href="/themes/" class="ab-item">Themes</a></li>
+																																					<li id="navmenu-premiumthemes"><a href="/premium-themes/" class="ab-item">Premium Themes</a></li>
+																																					<li id="navmenu-tos"><a href="/tos-dashboard/" class="ab-item">TOS</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-jetpack"><a href="/jetpack/engagement/" class="ab-item">Jetpack</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-sitesearch"><a href="/site-profiles/" class="ab-item">Search</a></li>
+																																					<li id="navmenu-engagement"><a href="/jetpack/engagement/" class="ab-item">Engagement</a></li>
+																																					<li id="navmenu-plugins"><a href="/jetpack/engagement/plugins" class="ab-item">Plugins</a></li>
+																																					<li id="navmenu-revenue"><a href="/jetpack/engagement/revenue" class="ab-item">Revenue</a></li>
+																																					<li id="navmenu-activitylog"><a href="/activity-log/" class="ab-item">Activity Log</a></li>
+																																					<li id="navmenu-rewind"><a href="/rewind" class="ab-item">Rewind</a></li>
+																																					<li id="navmenu-themes"><a href="/jetpack/engagement/themes" class="ab-item">Themes</a></li>
+																																					<li id="navmenu-sitestats"><a href="/jetpack/site/stats" class="ab-item">Stats</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-happiness"><a href="/support-stats/" class="ab-item">Happiness</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-feedbackstats"><a href="/support-stats/feedback/" class="ab-item">Feedback Stats</a></li>
+																																					<li id="navmenu-happinessteamstats"><a href="/support-stats/" class="ab-item">Happiness Team Stats</a></li>
+																																					<li id="navmenu-guidedtransfer"><a href="/guided-transfer/" class="ab-item">Guided Transfer</a></li>
+																																					<li id="navmenu-ticketexplorer"><a href="/mgs/tickets.php" class="ab-item">Ticket Explorer</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-payments"><a href="/simple-payments/" class="ab-item">Payments</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-simplepaymentsleaderboard"><a href="/simple-payments/" class="ab-item">Simple Payments Leaderboard</a></li>
+																																					<li id="navmenu-simplepaymentsstats"><a href="/s/simple_payments/" class="ab-item">Simple Payments Stats</a></li>
+																																					<li id="navmenu-recurringpayments"><a href="/recurring-payments/" class="ab-item">Recurring Payments</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-vip"><a href="/vip-dashboard/" class="ab-item">VIP</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-g1:vip"><a href="/s/gl/vip/" class="ab-item">G1:VIP</a></li>
+																																					<li id="navmenu-vipdeploysbyrepo"><a href="/s/deploys-by-repo/vip/" class="ab-item">VIP Deploys by Repo</a></li>
+																																					<li id="navmenu-viprevenue"><a href="/s/vip-revenue/payments-received/" class="ab-item">VIP Revenue</a></li>
+																																					<li id="navmenu-vipticketstats"><a href="/s/vip_ticket_stats/zd-created/" class="ab-item">VIP Ticket Stats</a></li>
+																																					<li id="navmenu-vipsites"><a href="/vips.php" class="ab-item">VIP Sites</a></li>
+																																					<li id="navmenu-viprevenueentry"><a href="/vip-revenue-entry.php" class="ab-item">VIP Revenue Entry</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-systems"><a href="/systems-dashboard/" class="ab-item">Systems</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-mydns"><a href="/mydns/" class="ab-item">MyDNS</a></li>
+																																					<li id="navmenu-pagegen"><a href="/pagegen/" class="ab-item">PageGen</a></li>
+																																					<li id="navmenu-phpmyadmin"><a href="/phpmyadmin/" class="ab-item">phpMyAdmin</a></li>
+																																					<li id="navmenu-developerkarma"><a href="/dev-karma/" class="ab-item">Developer Karma</a></li>
+																																					<li id="navmenu-secretstoreauditlogs"><a href="/secret-store/audit-logs/" class="ab-item">Secret Store Audit Logs</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li id="navmenu-dashboards"><a href="/campaigns/" title="Ad Campaigns" class="ab-item">Ads</a></li>
+
+																													<li id="navmenu-dashboards"><a href="/hiring/" title="Hiring" class="ab-item">Hiring</a></li>
+
+																													<li id="navmenu-dashboards"><a href="/i18n/" title="i18n" class="ab-item">Internationalization</a></li>
+
+																													<li id="navmenu-dashboards"><a href="/dot-org-dashboard/" title=".Org" class="ab-item">.Org</a></li>
+
+																													<li id="navmenu-dashboards"><a href="/reader/dashboard" title="Reader" class="ab-item">Reader</a></li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-simperium"><a href="#" class="ab-item">Simperium</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-reports"><a href="/simperium/report/" class="ab-item">Reports</a></li>
+																																					<li id="navmenu-dbtools"><a href="/simperium/dbtools/" class="ab-item">DB Tools</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-simplenote"><a href="/simplenote/reportcard/" class="ab-item">Simplenote</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-reportcard"><a href="/simplenote/reportcard/" class="ab-item">Report Card</a></li>
+																																			</ul>
+																</div>
+															</li>
+																																							</ul>
+											</div>
+										</li>
+																											<li class="menu-has-subs menupop" id="navmenu-tools"><a href="#" class="ab-item">Tools</a>
+											<div class="ab-sub-wrapper">
+												<ul class="ab-sub-menu">
+
+																													<li class="menu-has-subs menupop" id="navmenu-automatedtransfer"><a href="/automated-transfer/index.php" class="ab-item">Automated Transfer</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-siteoptionslookup"><a href="/automated-transfer/site-options-lookup.php" class="ab-item">Site Options Lookup</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-paymentsadmin"><a href="/payments-admin/" class="ab-item">Payments Admin</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-reports"><a href="/payments-admin/detail.php" class="ab-item">Reports</a></li>
+																																					<li id="navmenu-receipts"><a href="/payments-admin/receipts.php" class="ab-item">Receipts</a></li>
+																																					<li id="navmenu-dataentry"><a href="/payments-admin/data-ads.php" class="ab-item">Data Entry</a></li>
+																																					<li id="navmenu-payments"><a href="/payments-admin/payment-list.php" class="ab-item">Payments</a></li>
+																																					<li id="navmenu-codedocumentation"><a href="/code-docs/" class="ab-item">Code documentation</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-blogstats"><a href="#" class="ab-item">Blog Stats</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-statsmerger"><a href="/merge-stats.php" class="ab-item">Stats Merger</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-code"><a href="https://opengrok.a8c.com/source/search" class="ab-item">Code</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-codesearch(opengrok)"><a href="https://opengrok.a8c.com/source/search" class="ab-item">Code Search</a></li>
+																																					<li id="navmenu-commitviewer(pulse)"><a href="/pulse/" class="ab-item">Commit Viewer</a></li>
+																																					<li id="navmenu-commitexplorer"><a href="/mgs/svn-commits.php" class="ab-item">Commit Explorer</a></li>
+																																					<li id="navmenu-dotcomtrac"><a href="https://wpcom.trac.automattic.com" class="ab-item">Dotcom Trac</a></li>
+																																					<li id="navmenu-dotorgtrac"><a href="http://core.trac.wordpress.org" class="ab-item">Dotorg Trac</a></li>
+																																					<li id="navmenu-jetpacktrac"><a href="http://plugins.trac.wordpress.org/browser/jetpack/" class="ab-item">Jetpack Trac</a></li>
+																																					<li id="navmenu-codep2"><a href="http://codep2.wordpress.com" class="ab-item">Code P2</a></li>
+																																					<li id="navmenu-codereviewp2"><a href="http://codereviewp2.wordpress.com" class="ab-item">Code Review P2</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-deploy"><a href="#" class="ab-item">Deploy</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-gravatar"><a href="/gravatar/deploy/" class="ab-item">Gravatar</a></li>
+																																					<li id="navmenu-translations"><a href="/i18n-deploy/" class="ab-item">Translations</a></li>
+																																					<li id="navmenu-themes"><a href="/themes/deploy/" class="ab-item">Themes</a></li>
+																																					<li id="navmenu-polldaddy"><a href="/polldaddy/deploy/" class="ab-item">Polldaddy</a></li>
+																																					<li id="navmenu-vip"><a href="/deploy/vip/" class="ab-item">VIP</a></li>
+																																					<li id="navmenu-vipgo"><a href="/deploy/vipgo/" class="ab-item">VIP Go</a></li>
+																																					<li id="navmenu-calypso"><a href="/calypso" class="ab-item">Calypso</a></li>
+																																					<li id="navmenu-wordpress.com"><a href="/deploy/" class="ab-item">WordPress.com</a></li>
+																																					<li id="navmenu-intensedebate"><a href="https://mc.intensedebate.com/deploy.php" class="ab-item">Intense Debate</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-files"><a href="#" class="ab-item">Files</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-filetools"><a href="/file-tools/" class="ab-item">File Tools</a></li>
+																																					<li id="navmenu-fileuploader"><a href="/files.php" class="ab-item">File Uploader</a></li>
+																																					<li id="navmenu-checkvarnishcache"><a href="/check-varnish-caches.php" class="ab-item">Check Varnish Cache</a></li>
+																																					<li id="navmenu-clearvarnishcache"><a href="/nuke-varnish-cache.php" class="ab-item">Clear Varnish Cache</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-happiness"><a href="#" class="ab-item">Happiness</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-switchtouser"><a href="/tools/support-user/" class="ab-item">Switch to User</a></li>
+																																					<li id="navmenu-kayako"><a href="https://help.automattic.com/staff/index.php" class="ab-item">Kayako</a></li>
+																																					<li id="navmenu-olarkchatconsole"><a href="http://chat.olark.com" class="ab-item">Olark Chat Console</a></li>
+																																					<li id="navmenu-helpshift"><a href="https://automattic.helpshift.com/login/" class="ab-item">HelpShift</a></li>
+																																					<li id="navmenu-happinessscheduler(delorean)"><a href="/happiness/schedule/" class="ab-item">Happiness Scheduler (Delorean)</a></li>
+																																					<li id="navmenu-networkadmin"><a href="https://wordpress.com/wp-admin/network/" class="ab-item">Network Admin</a></li>
+																																					<li id="navmenu-logstashforemail"><a href="/logstash/?stash=mail" class="ab-item">Logstash for Email</a></li>
+																																					<li id="navmenu-domainadmin"><a href="/tools/reportcard/domain/" class="ab-item">Domain Admin</a></li>
+																																					<li id="navmenu-gsuite"><a href="/tools/reportcard/google-apps/" class="ab-item">G Suite</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-other"><a href="#" class="ab-item">Other</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-passwordgenerator"><a href="/pwgen.php" class="ab-item">Password Generator</a></li>
+																																					<li id="navmenu-jobsmanagement"><a href="/jobs/" class="ab-item">Jobs Management</a></li>
+																																					<li id="navmenu-toolslist"><a href="/tools/" class="ab-item">Tools List</a></li>
+																																					<li id="navmenu-videousage"><a href="/video/" class="ab-item">Video Usage</a></li>
+																																					<li id="navmenu-sitemap"><a href="/a-z/" class="ab-item">Sitemap</a></li>
+																																					<li id="navmenu-databaseexplorer"><a href="/db-explorer/" class="ab-item">DB Explorer</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-reader"><a href="#" class="ab-item">Reader</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-feedlookup"><a href="/tools/reader/feed-lookup/" class="ab-item">Feed Lookup</a></li>
+																																					<li id="navmenu-tagcheck"><a href="/tools/reader/tag-check/" class="ab-item">Tag Check</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li class="menu-has-subs menupop" id="navmenu-reportcards"><a href="#" class="ab-item">Report Cards</a>
+																<div class="ab-sub-wrapper">
+																	<ul class="ab-sub-menu">
+																																					<li id="navmenu-domainadmin"><a href="/tools/reportcard/domain/" class="ab-item">Domain Admin</a></li>
+																																					<li id="navmenu-domainsapi"><a href="/tools/reportcard/domains-api/" class="ab-item">Domains API</a></li>
+																																					<li id="navmenu-gsuite"><a href="/tools/reportcard/google-apps/" class="ab-item">G Suite</a></li>
+																																					<li id="navmenu-simplenote"><a href="/simplenote/reportcard/" class="ab-item">Simplenote</a></li>
+																																					<li id="navmenu-wordads"><a href="/wordads/" class="ab-item">WordAds</a></li>
+																																			</ul>
+																</div>
+															</li>
+
+																													<li id="navmenu-tools"><a href="/afk/" title="AFK" class="ab-item">AFK</a></li>
+
+																													<li id="navmenu-tools"><a href="/store/products.php" title="All Products" class="ab-item">All Products</a></li>
+
+																													<li id="navmenu-tools"><a href="/s/compare/" title="Compare MC Stats" class="ab-item">Compare MC Stats</a></li>
+
+																													<li id="navmenu-tools"><a href="/tools/domain-maintenance/" title="Domain Maintenance" class="ab-item">Domain Maintenance</a></li>
+
+																													<li id="navmenu-tools"><a href="/gathermattic/" title="Gathermattic" class="ab-item">Gathermattic</a></li>
+
+																													<li id="navmenu-tools"><a href="/glossary/" title="Glossary" class="ab-item">Glossary</a></li>
+
+																													<li id="navmenu-tools"><a href="/inventory/" title="Inventory" class="ab-item">Inventory</a></li>
+
+																													<li id="navmenu-tools"><a href="/once/" title="One Time Messagging" class="ab-item">Once</a></li>
+
+																													<li id="navmenu-tools"><a href="/pb/" title="Paste Bin" class="ab-item">Paste Bin</a></li>
+
+																													<li id="navmenu-tools"><a href="/secret-store/" title="Secret Store" class="ab-item">Secret Store</a></li>
+
+																													<li id="navmenu-tools"><a href="/github-pr-reports/" title="Schedule Automated PR Reports to Slack" class="ab-item">GitHub PR Reports</a></li>
+
+																													<li id="navmenu-tools"><a href="/tools/zoom-reservation/" title="Reserve a paid Zoom account" class="ab-item">Zoom Reservation</a></li>
+																																							</ul>
+											</div>
+										</li>
+																								</ul>
+						</div>
+					</li>
+							<li id="searchform" class="menupop hover">
+				<form action="/mgs/" method="get">
+					<input
+						id="mgs-search"
+						name="q"
+						type="search"
+						placeholder="Matt's Global Search"
+												autosave="mgs-header"
+						size="28"
+						value=""
+						autocomplete="off"
+					/>
+				</form>
+				<div class="ab-sub-wrapper">
+					<ul id="mgs-results" class="search-dropdown ab-sub-menu"></ul>
+				</div>
+			</li>
+
+			<li class="menu-top" id="wp-admin-bar-notes">
+				<div class="ab-item ab-empty-item">
+				<span id="wpnt-notes-unread-count" class="wpnt-loading wpn-read">
+					<span class="noticon noticon-notification"></span>
+				</span>
+				</div>
+				<div id="wpnt-notes-panel2" style="display:none" lang="en" dir="ltr">
+					<div class="wpnt-notes-panel-header">
+						<span class="wpnt-notes-header"></span><span class="wpnt-notes-panel-link"></span>
+					</div>
+				</div>
+			</li>
+
+		</ul>
+	</div>
+</div>
+
+
+<div id="junk" class="mc-postbox ">
+
+<h1 class='page-title'>bsanevans's Support Stats</h1>
+	<div id="page-heart"><a href='/support-stats/person.php?username=bsanevans' title='Add to Favorites' id='heart-ab7104cb84f3cf0b8efa1ba4d69047d5' class='love notloved noticon noticon-heart' style='font-size: 56px; width: 56px; height: 56px;'></a></div>
+	<div id="page-edit-tags">
+		<a href="/edit-note/?path=%2Fsupport-stats%2Fperson.php%3Fusername%3Dbsanevans&page_title=bsanevans%27s+Support+Stats" title="Tag this page" class="noticon noticon-tag"></a>
+	</div>
+
+				<div class="mc-postbox" id="page-notes">
+		<div class="mc-note"><script type="application/json">{"title":"bsanevans%27s%20Support%20Stats","edit_button_text":"Add note","content_html":"","last_edited_class":"never-edited","hash":"","path":"\/support-stats\/person.php?username=bsanevans","el":".mc-note"}</script></div>	</div>
+
+	<script id='notifications-common-js' type='text/javascript' src='/wp/wp-content/mu-plugins/notes/notes-common-v2.js?mtime=1408416055'></script>
+	<script id='notifications-js' type='text/javascript' src='/wp/wp-content/mu-plugins/notes/admin-bar-v2.js?mtime=1557734176'></script>
+
+<div id="hapdash-wrapper" class="happiness-dashboard">
+		<header id="hapdash-header">
+		<h1>Happiness Dashboard</h1>
+		<ul>
+			<li class="selected"><a href="/support-stats/">WordPress.com</a></li>
+			<li class=""><a href="/support-stats/jpop/">JPOP</a></li>
+			<li class=""><a href="/support-stats/feedback/">Feedback</a></li>
+			<li class=""><a href="/support-stats/person/">Personal Stats</a></li>
+		</ul>
+	</header>
+		<div id="hapdash-content">
+		<div class="hapdash-card">
+			<div class="hapdash-card-back">
+				<a href="/support-stats">See General Stats</a>
+			</div>
+		</div>
+
+		<div class="hapdash-card">
+			<div class="hapdash-card-content hapdash-profile">
+				<div class="hapdash-profile-meta">
+					<div class="hapdash-profile-avatar"><img alt='' src='https://0.gravatar.com/avatar/c4bb7b7f55083a237dc0d4f46964b5e2?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-64' height='64' width='64' /></div>
+					<div>
+						<h2 class="hapdash-profile-name">Benjamin Evans</h2>
+						<h3 class="hapdash-profile-team"></h3>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="hapdash-card">
+			<div class="hapdash-card-content hapdash-table">
+				<table>
+					<thead>
+						<tr class="top">
+							<th></th>
+							<th>Jan</th>
+							<th>Feb</th>
+							<th>Mar</th>
+							<th>Apr</th>
+							<th>May</th>
+							<th>Jun</th>
+							<th>Jul</th>
+							<th>Aug</th>
+							<th>Sep</th>
+							<th>Oct</th>
+							<th>Nov</th>
+							<th>Dec</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+<tr  class="alt" ><th>2018</th><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2018-12'>1</a></td><td>1</td></tr><tr ><th>2019</th><td width="30"></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-02'>1</a></td><td width="30"></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-04'>139</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-05'>257</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-06'>151</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-07'>492</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-08'>567</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-09'>331</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-10'>542</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-11'>413</a></td><td width='50' ><a href='/support-stats/person.php?username=bsanevans&ss_date=2019-12'>544</a></td><td>3,437</td></tr><tr  class="alt" ><th>2020</th><td width='50'  class="table-selected"><a href='/support-stats/person.php?username=bsanevans&ss_date=2020-01'>427</a></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td>427</td></tr>						<tr>
+							<td colspan="12"></td>
+							<td><strong>Lifetime:</strong></td>
+							<td>3,865</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="hapdash-card">
+			<div class="hapdash-card-header">
+				<h3>Stats for January 2020</h3>
+				Times adjusted to Asia/Tokyo (switch to <a href="/support-stats/person.php?username=bsanevans&amp;tz=UTC">UTC</a>)			</div>
+			<div class="hapdash-card-navigation">
+				<p><a href="/support-stats/person.php?username=bsanevans&ss_date=2019-12">&laquo; December 2019</a>
+</p>
+			</div>
+			<div class="hapdash-card-content">
+			<div id="person-feedbacks">
+				<h4>Feedback ratings received</h4>
+				<p><strong>Overall</strong> - Personal score: <img class="tiny_smiley" src="https://wordpress.com/i/support/feedback/automattobot-happy.png">9.6 (52)
+				- Average Team score: <img class="tiny_smiley" src="https://wordpress.com/i/support/feedback/automattobot-happy.png">9.1				</p>
+									<p><strong>Happychat</strong>
+					- Personal score: <img class="tiny_smiley" src="https://wordpress.com/i/support/feedback/automattobot-happy.png">9.6 (52)
+					- Average Team score: <img class="tiny_smiley" src="https://wordpress.com/i/support/feedback/automattobot-happy.png">9.1					</p>
+								<!--
+				<div>
+					<span class="percentage happy"><img class="small_smiley" src="https://wordpress.com/i/support/feedback/automattobot-happy.png">94% said they were happy!</span>
+					<span class="percentage ok"><img class="small_smiley" src="https://wordpress.com/i/support/feedback/automattobot-ok.png">4% said just OK</span>
+					<span class="percentage unhappy"><img class="small_smiley" src="https://wordpress.com/i/support/feedback/automattobot-sad.png">2% said unhappy</span>
+				</div>
+				-->
+			</div>
+		</p>
+					</div>
+
+			<div class="hapdash-card-content hapdash-table">
+				<table class="table-grid">
+					<thead>
+						<tr class="top">
+							<th>Monday</th>
+							<th>Tuesday</th>
+							<th>Wednesday</th>
+							<th>Thursday</th>
+							<th>Friday</th>
+							<th>Caturday</th>
+							<th>Sunday</th>
+							<th>Totals</th>
+							<th>Averages</th>
+						</tr>
+					</thead>
+
+					<tr valign='bottom'><td></td><td></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-01" style="font-size: 80%; color: #666">Jan 1</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-02" style="font-size: 80%; color: #666">Jan 2</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-03" style="font-size: 80%; color: #666">Jan 3</a><br /><br />20 tickets<br /><br />4 forums<br /><br />21 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (3)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-04" style="font-size: 80%; color: #666">Jan 4</a><br /><br />13 tickets<br /><br />2 forums<br /><br />30 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (6)<br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-05" style="font-size: 80%; color: #666">Jan 5</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td class='td-separated'>33 tickets<br /><br />6 forums<br />51 chats<br /><strong>90 Overall</strong><br /></td><td >17 tickets<br /><br />3 forums<br />26 chats<br /><br /></td></tr><tr valign='bottom'><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-06" style="font-size: 80%; color: #666">Jan 6</a><br /><br />22 tickets<br /><br />1 forums<br /><br />21 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (10)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-07" style="font-size: 80%; color: #666">Jan 7</a><br /><br />16 tickets<br /><br /><br /><br />27 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (6)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-08" style="font-size: 80%; color: #666">Jan 8</a><br /><br />5 tickets<br /><br /><br /><br />9 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (1)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-09" style="font-size: 80%; color: #666">Jan 9</a><br /><br />9 tickets<br /><br />2 forums<br /><br />34 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (5)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-10" style="font-size: 80%; color: #666">Jan 10</a><br /><br />5 tickets<br /><br /><br /><br />19 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (4)<br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-11" style="font-size: 80%; color: #666">Jan 11</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-12" style="font-size: 80%; color: #666">Jan 12</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td class='td-separated'>57 tickets<br /><br />3 forums<br />110 chats<br /><strong>170 Overall</strong><br /></td><td >29 tickets<br /><br />2 forums<br />55 chats<br /><br /></td></tr><tr valign='bottom'><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-13" style="font-size: 80%; color: #666">Jan 13</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-14" style="font-size: 80%; color: #666">Jan 14</a><br /><br />6 tickets<br /><br />2 forums<br /><br />21 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>8.8 (4)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-15" style="font-size: 80%; color: #666">Jan 15</a><br /><br />10 tickets<br /><br />5 forums<br /><br />4 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (2)<br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-16" style="font-size: 80%; color: #666">Jan 16</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-17" style="font-size: 80%; color: #666">Jan 17</a><br /><br />17 tickets<br /><br /><br /><br />20 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>10.0 (3)<br /></td><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-18" style="font-size: 80%; color: #666">Jan 18</a><br /><br />32 tickets<br /><br /><br /><br />6 <small>Happychats</small><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-19" style="font-size: 80%; color: #666">Jan 19</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td class='td-separated'>65 tickets<br /><br />7 forums<br />51 chats<br /><strong>123 Overall</strong><br /></td><td >33 tickets<br /><br />4 forums<br />26 chats<br /><br /></td></tr><tr valign='bottom'><td style="background-color: #ECF1F4;" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-20" style="font-size: 80%; color: #666">Jan 20</a><br /><br />17 tickets<br /><br />2 forums<br /><br />25 <small>Happychats</small><br /><img class='tiny_smiley' src='https://wordpress.com/i/support/feedback/automattobot-happy.png'>8.1 (8)<br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-21" style="font-size: 80%; color: #666">Jan 21</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-22" style="font-size: 80%; color: #666">Jan 22</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-23" style="font-size: 80%; color: #666">Jan 23</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-24" style="font-size: 80%; color: #666">Jan 24</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-25" style="font-size: 80%; color: #666">Jan 25</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-26" style="font-size: 80%; color: #666">Jan 26</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td class='td-separated'>17 tickets<br /><br />2 forums<br />25 chats<br /><strong>44 Overall</strong><br /></td><td></td></tr><tr valign='bottom'><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-27" style="font-size: 80%; color: #666">Jan 27</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-28" style="font-size: 80%; color: #666">Jan 28</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-29" style="font-size: 80%; color: #666">Jan 29</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-30" style="font-size: 80%; color: #666">Jan 30</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td style="" width="90" valign="top"><a href="/support-stats/day-activity.php?username=bsanevans&#038;day=2020-01-31" style="font-size: 80%; color: #666">Jan 31</a><br /><br /><br /><br /><br /><br /><br /><br /></td><td></td><td></td><td class='td-separated'><br /><br /><br /><br /><strong>0 Overall</strong><br /></td><td></td></tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="hapdash-card">
+			<div class="hapdash-card-content hapdash-table">
+			<h3>Notes</h3>
+			<ul>
+				<li>As a new default, this board will show the times adjusted to the Automattician's local timezone. This might shift the stats a little: some &quot;UTC edge&quot; events would have previously fallen into the past or next month. The <a href="/support-stats/person.php?username=bsanevans&amp;tz=UTC">UTC view</a> will calculate the stats as previously by UTC, including all the <a href="https://jpophappydev.wordpress.com/2018/05/16/make-mc-support-stats-able-to-display-in-local-time/#comment-50">oddities of split Happychats</a>.</li>
+			</ul>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+<div id="stat-links" style="display:none">Blogs linking to this stat.</div>
+<p class="tags-and-loves"><span id="fav-tags"></span><br />
+<span id="lovedby">&#9829; This page loved by <a href='/?view_as=bsanevans'><img alt='' src='https://0.gravatar.com/avatar/c4bb7b7f55083a237dc0d4f46964b5e2?s=20&#038;d=identicon&#038;r=G' class='avatar avatar-20' height='20' width='20' /> bsanevans&nbsp;(15)</a>. </span></p>
+
+</div>
+
+<div class="footer">
+	GMT: 2020-01-21 8:01 &#8212; 6.295 seconds; <a href="javascript:;" onclick="jQuery('#queries').toggle()">389 queries in 0.0ms</a>
+
+	<pre id="queries">
+	Current file: /support-stats/person.php
+	</pre>
+</div>
+
+
+
+</body>
+</html>
+

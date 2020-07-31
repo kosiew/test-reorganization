@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 2 :: jQuery Events</title>
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+        crossorigin="anonymous"></script>
+
+    <script src="jquery.min.js"></script>
+    <script>
+        $(function(){
+            function button2Click() {
+                alert('Button 2 clicked');
+            }
+            $('.button1').click(function(){
+                alert("Button 1 clicked");
+            });
+            $('body').on("click", ".button2", button2Click);
+            setTimeout(function(){
+                $('.additional').append("<button class='button1'>Button 1 again</button>");
+                $('.additional').append("<button class='button2'>Button 2 again</button>");
+            }, 2000);
+
+        });
+    </script>
+</head>
+<body>
+<button class="button1">Button 1</button>
+<button class="button2">Button 2</button>
+<div class="additional"></div>
+</body>
+</html>
+
+

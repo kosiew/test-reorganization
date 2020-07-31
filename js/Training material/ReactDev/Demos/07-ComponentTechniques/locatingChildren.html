@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Locating Children</title>
+	<style>
+		body {font-family: Calibri;}
+		.largeThumbnail {width: 94%;}
+		.smallThumbnail {width: 10%; margin-right: 2%;}
+	</style>
+</head>
+<body>
+
+<div id="osl-container"></div>
+
+<script src="https://unpkg.com/prop-types/prop-types.js"></script>
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+<script type="text/babel">
+
+	const getThumbnailUrlsFromRestService = () => {
+
+		return new Promise((resolve, reject) => {
+			
+			const request = new XMLHttpRequest()
+			request.open('GET', 'http://localhost:3000/api/thumbnailUrls')
+
+			request.onload = () => (request.status == 200) ? 
+				resolve(JSON.parse(request.response)) : 
+				reject(Error(request.statusText))
+
+			request.onerror = err => reject(err)
+
+			request.send()
+		})
+	}
+	
+    const Thumbnail = ({url, showLarge=false, onThumbnailClick=f=>f }) =>
+        <img className={showLarge ? 'largeThumbnail' : 'smallThumbnail'} src={url} title={url} onClick={onThumbnailClick} />
+
+    Thumbnail.propTypes = {
+        url: PropTypes.string.isRequired,
+        showLarge: PropTypes.bool,
+        onThumbnailClick: PropTypes.func
+    }
+
+	const findChild = (children, child) =>
+		React.Children.toArray(children).filter(c => c.type === child )[0]
+		  
+	const GalleryHeader = ({children}) => 
+		React.Children.toArray(children) 
+
+	const GalleryFooter = ({children}) => 
+		React.Children.toArray(children)
+
+    class Gallery extends React.Component {
+
+		static propTypes = {
+            baseAddress: PropTypes.string.isRequired			
+        }
+
+        constructor(props) {
+			console.log('Gallery constructor.')
+            super(props)
+            this.state = {
+				thumbnailUrls: [],
+				selectedThumbnailUrl: undefined,
+				isLoading: false
+            }
+            this.thumbnailSelected = this.thumbnailSelected.bind(this)
+        }
+
+		componentWillMount() {
+			 this.setState({isLoading: true})
+			 getThumbnailUrlsFromRestService().then(
+				thumbnailUrls => {
+					this.setState({thumbnailUrls, isLoading: false})
+				},
+				error => {
+					this.setState({isLoading: false})
+				}
+			)
+		}
+
+		componentDidMount() {
+			console.log('Gallery componentDidMount. The DOM is now built. This is a good place to start timers/intervals, initialize 3rd-party libraries that require the DOM, etc.')
+		}
+		
+		shouldComponentUpdate(nextProps, nextState) {
+			const shouldUpdate : boolean = (!nextState.selectedThumbnailUrl) || (nextState.selectedThumbnailUrl !== this.state.selectedThumbnailUrl)
+			console.log(`Gallery shouldComponentUpdate() is returning ${shouldUpdate}`)			
+			return shouldUpdate
+		}
+
+		componentWillUpdate() {
+			console.log('Gallery componentWillUpdate.')
+		}
+		
+		componentDidUpdate(prevProps, prevState) {
+			console.log(`Gallery componentDidUpdate, previous selectedThumbnailUrl was ${prevState.selectedThumbnailUrl}, new selectedThumbnailUrl is ${this.state.selectedThumbnailUrl}`)
+		}
+		
+		componentWillUnmount() {
+			console.log('Gallery componentWillUnmount.')
+		}
+		
+        thumbnailSelected(selectedThumbnailUrl) {
+            this.setState({selectedThumbnailUrl})
+        }
+
+        render() {
+			console.log('Gallery render.')
+            const {baseAddress, children} = this.props
+            const {selectedThumbnailUrl, thumbnailUrls, isLoading} = this.state
+			
+			const largeThumbnail = (selectedThumbnailUrl)  ?
+					<Thumbnail url={baseAddress + '/' + selectedThumbnailUrl} showLarge={true} /> :
+					<h2>No image selected</h2>
+					
+			return (
+				<div>
+					{findChild(children, GalleryHeader)}
+					{ (isLoading) ?
+						<span>Loading URLs from REST service...</span> :
+						<div>
+							<div>
+								{thumbnailUrls.map((thumbnailUrl, i) =>
+									<Thumbnail key={i}
+											   url={baseAddress + '/' + thumbnailUrl}
+											   onThumbnailClick={() => this.thumbnailSelected(thumbnailUrl)}
+									/> 
+								)}
+							</div>
+							<div>{largeThumbnail}</div> 
+						</div>
+					}
+					{findChild(children, GalleryFooter)}
+				</div>
+			)
+        }
+    }
+
+    ReactDOM.render(
+        <Gallery baseAddress="http://olsensoft.com/thumbnails">
+			<GalleryHeader>
+				<h1>Totally Awesome Gallery</h1>
+			</GalleryHeader>
+			<GalleryFooter>
+				<hr/>
+				<small>&copy; Totally Awesome Co</small>
+			</GalleryFooter>
+		</Gallery>,
+        document.getElementById('osl-container')
+    )
+
+</script>
+
+</body>
+</html>

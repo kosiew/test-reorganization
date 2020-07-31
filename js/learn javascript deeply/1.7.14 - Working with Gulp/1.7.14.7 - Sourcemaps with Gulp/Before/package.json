@@ -1,0 +1,14 @@
+{
+  "name": "gulp-setup",
+  "version": "0.6.0",
+  "description": "Sample setup for setting up Sourcemaps with Gulp",
+  "author": "@zgordon",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0"
+  }
+}

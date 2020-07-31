@@ -1,0 +1,13 @@
+{
+  "name": "gulp-setup",
+  "version": "0.3.0",
+  "description": "Sample setup for Running a Node Server with Gulp",
+  "author": "@zgordon",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0"
+  }
+}

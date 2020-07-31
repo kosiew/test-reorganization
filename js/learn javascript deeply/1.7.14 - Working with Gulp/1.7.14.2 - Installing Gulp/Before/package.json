@@ -1,0 +1,8 @@
+{
+  "name": "gulp-setup",
+  "version": "0.1.0",
+  "description": "Sample setup for installing Gulp",
+  "author": "@zgordon",
+  "devDependencies": {    
+  }
+}

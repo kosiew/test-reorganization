@@ -1,0 +1,11 @@
+{
+  "name": "grunt-setup",
+  "version": "0.5.0",
+  "description": "Sample setup for concatenating, minifying and error linting withGrunt",
+  "author": "@zgordon",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0"
+  }
+}

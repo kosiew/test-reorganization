@@ -1,0 +1,17 @@
+{
+  "name": "gulp-setup",
+  "version": "0.8.0",
+  "description": "Sample setup for installing setting up ESLint with Gulp",
+  "author": "@zgordon",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.3.1",
+    "gulp-uglify": "^2.0.0"
+  }
+}
