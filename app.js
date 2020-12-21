@@ -6,7 +6,7 @@
                         <div class="pig-say">
                             <div class="pig-info-arrow"></div>
                             <div class="pig-info">
-                                <p><b>Peppa:</b> {{message}} <br/>
+                                <p><b>Wapuu:</b> {{message}} <br/>
                                 <span>User: {{userInfo.login}} / </span>
                                 <span>Repos: {{userInfo.public_repos}}<br></span>
                                 <span>Gists: {{userInfo.public_gists}} / </span>
