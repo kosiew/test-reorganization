@@ -13,7 +13,7 @@
                                 <span>Followers: {{userInfo.followers}}<br></span>     
                                 <div class="pig-info-more">
                                 </div>              
-                                <div class="action-footer"><p>Thanks <a href="https://github.com/tobyqin">Toby</a> bringing me here ^_^</p></div>
+                                <div class="action-footer"><p>Thanks <a href="https://github.com/tobyqin">Siew</a> bringing me here ^_^</p></div>
                             </div>
                         </div>
                     </span>
